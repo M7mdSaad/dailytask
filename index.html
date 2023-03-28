@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .removeTask, .editTask {
+            cursor: pointer;
+        }
+        #semiScreen {
+            background-color: black;
+            opacity: 0.7;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            visibility: hidden;
+        }
+        #taskForm {
+            background-color: wheat;
+            border: red thin solid;
+            border-radius: 16px;
+            width: 47vw; height: 55vh;
+            position: fixed;
+            top: 50vh;
+            left: 25vw;
+            transform: translateX(50%);
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Tasks</h1>
+    <button id="createBt">Create New Task</button>
+    <table width="77%" border="1" align="center">
+        <tr>
+            <td>Task Name</td>
+            <td>Details</td>
+            <td>operation</td>
+        </tr>
+        <tr>
+            <td>Morning Walk</td>
+            <td>walk at least 1 hour at 6 o'clock</td>
+            <td>
+                <h3 class="removeTask">Remove</h3>
+                <h3 class="editTask">Edit</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>eat breakfast</td>
+            <td>eat breakfast at 8 o'clock</td>
+            <td>
+                <h3 class="removeTask">Remove</h3>
+                <h3 class="editTask">Edit</h3>
+            </td>
+        </tr>
+    </table>
+
+    <div id="semiScreen"></div>
+
+    <div id="taskForm">
+        <h3>Task</h3>
+        <div>
+            task Name 
+            <input id="taskName">
+        </div>
+        <div>
+            task Details 
+            <textarea id="taskDetails" cols="30" rows="10"></textarea>
+        </div>
+        <div>
+            <button id="sendData">Click</button>
+        </div>
+        
+    </div>
+
+    <script>
+
+        var currentUpdatedTask;
+        var formStatus;
+
+        // ---------------- delete task --------------------------
+        var removeTasks = document.querySelectorAll(".removeTask");
+        for(var i = 0; i < removeTasks.length; i++){
+            removeTasks[i].addEventListener("click", function(){
+                //this.parentNode.parentNode.remove();
+                removeOneTask(this);
+            });
+        }
+        // document.querySelector("xxxx").parentNode
+
+        // display form for new task --------------------------
+        document.querySelector("#createBt").addEventListener("click", function(){
+
+            formStatus = "create";
+
+            document.querySelector("#semiScreen").style.visibility = "visible";
+            document.querySelector("#taskForm").style.visibility = "visible";
+
+            document.querySelector("#taskForm h3").innerHTML = "New Task";
+            document.querySelector("#sendData").innerHTML = "Create New Task";
+        });
+
+        // display form for ---edit----------- task --------------------------
+        var editbts = document.querySelectorAll(".editTask");
+        for(var x = 0; x < editbts.length; x++){
+            editbts[x].addEventListener("click", function(){
+                editOneTask(this);                
+            });
+        }
+        
+
+        // click button in form -------------------------------
+        document.querySelector("#sendData").addEventListener("click", function(){
+            var newTaskName = document.querySelector("#taskName").value;
+            var newTaskDetails = document.querySelector("#taskDetails").value;
+
+            document.querySelector("#taskName").value = "";
+            document.querySelector("#taskDetails").value = "";
+
+            if(formStatus == "create"){
+                var newTaskRow = document.createElement("tr");
+                    var newTaskNameCell = document.createElement("td");
+                    newTaskNameCell.innerText = newTaskName;
+                    newTaskRow.appendChild(newTaskNameCell);
+
+                    var newTaskDetailsCell = document.createElement("td");
+                    newTaskDetailsCell.innerText = newTaskDetails;
+                    newTaskRow.appendChild(newTaskDetailsCell);
+
+                    var newTaskOpCell = document.createElement("td");
+                        var removeBt = document.createElement("h3");
+                        removeBt.innerHTML = "Remove";
+                        removeBt.classList.add("removeTask");
+                        removeBt.addEventListener("click", function(){
+                            //this.parentNode.parentNode.remove();
+                            removeOneTask(this);
+                        });
+                        newTaskOpCell.appendChild(removeBt);
+
+                        var editBt = document.createElement("h3");
+                        editBt.innerHTML = "Edit";
+                        editBt.classList.add("editTask");
+                        editBt.addEventListener("click", function(){
+                            editOneTask(this);
+                        });
+                        newTaskOpCell.appendChild(editBt);
+
+                    newTaskRow.appendChild(newTaskOpCell);
+
+                document.querySelector("table").appendChild(newTaskRow);
+            }
+            else { // formStatus == "edit"
+                currentUpdatedTask.querySelectorAll("td")[0].innerText = newTaskName;
+                currentUpdatedTask.querySelectorAll("td")[1].innerText = newTaskDetails;
+            }
+
+            document.querySelector("#semiScreen").style.visibility = "hidden";
+            document.querySelector("#taskForm").style.visibility = "hidden";
+        });
+
+
+        function removeOneTask(myTaskRemoveBt){
+            myTaskRemoveBt.parentNode.parentNode.remove();
+        }
+
+        function editOneTask(myTaskEditBt){
+            formStatus = "edit";
+                currentUpdatedTask = myTaskEditBt.parentNode.parentNode;
+
+                document.querySelector("#semiScreen").style.visibility = "visible";
+                document.querySelector("#taskForm").style.visibility = "visible";
+
+                document.querySelector("#taskForm h3").innerHTML = "edit Task";
+                document.querySelector("#sendData").innerHTML = "update Task";
+
+                var taskNameText = myTaskEditBt.parentNode.parentNode.querySelectorAll("td")[0].innerText;
+                var taskDetailsText = myTaskEditBt.parentNode.parentNode.querySelectorAll("td")[1].innerText;
+
+                document.querySelector("#taskName").value = taskNameText;
+                document.querySelector("#taskDetails").value = taskDetailsText;
+        }
+    </script>
+</body>
+</html>
